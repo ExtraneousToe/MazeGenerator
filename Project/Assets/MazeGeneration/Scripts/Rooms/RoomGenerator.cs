@@ -6,6 +6,6 @@ namespace MazeGeneration
 {
     public abstract class RoomGenerator : ScriptableObject
     {
-        public abstract void GenerateRooms();
+        public abstract void GenerateRooms(GridCell[,] aGrid);
     }
 }
