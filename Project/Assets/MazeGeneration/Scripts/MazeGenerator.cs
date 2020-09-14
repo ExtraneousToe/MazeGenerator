@@ -77,6 +77,8 @@ namespace MazeGeneration
         [SerializeField] private GameObject m_wallPrefab;
         [SerializeField] private GameObject m_edgePrefab;
         [SerializeField] private GameObject m_pathPrefab;
+
+        private List<GameObject> _spawnedChildren = new List<GameObject>();
         #endregion
 
         #region Properties
@@ -86,8 +88,8 @@ namespace MazeGeneration
         #region Mono
         protected void Start()
         {
+            m_generationAlgorithm.OnCellChanged += (a) => Build();
             Generate();
-            Build();
         }
         #endregion
 
@@ -141,6 +143,9 @@ namespace MazeGeneration
 
         public void Build()
         {
+            _spawnedChildren.ForEach(go => Destroy(go));
+            _spawnedChildren.Clear();
+
             for (int x = 0; x < m_generatedGrid.GetLength(0); ++x)
             {
                 for (int y = 0; y < m_generatedGrid.GetLength(1); ++y)
@@ -167,7 +172,9 @@ namespace MazeGeneration
 
                     if (prefab)
                     {
-                        Instantiate(prefab, worldPos, Quaternion.identity, transform);
+                        _spawnedChildren.Add(
+                            Instantiate(prefab, worldPos, Quaternion.identity, transform)
+                        );
                     }
                 }
             }
