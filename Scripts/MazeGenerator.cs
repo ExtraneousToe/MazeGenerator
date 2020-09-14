@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace MazeGeneration
 {
+    using PathGeneration;
+    using RoomGeneration;
+
     public abstract class GridCell : IEquatable<GridCell>
     {
         public Vector2Int Coord { get; set; }
@@ -31,6 +34,12 @@ namespace MazeGeneration
         public WallCell(Vector2Int aCoord) : base(aCoord) { }
         public WallCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
         public override string ToString() => "x";
+    }
+    public class CornerCell : GridCell
+    {
+        public CornerCell(Vector2Int aCoord) : base(aCoord) { }
+        public CornerCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
+        public override string ToString() => "C";
     }
     public class PathCell : GridCell
     {
@@ -71,12 +80,13 @@ namespace MazeGeneration
         [Header("Path Generation")]
         [SerializeField] private PathAlgorithm m_generationAlgorithm;
 
-        private GridCell[,] m_generatedGrid;
+        private Maze m_maze;
 
         [Header("Building")]
         [SerializeField] private GameObject m_wallPrefab;
         [SerializeField] private GameObject m_edgePrefab;
         [SerializeField] private GameObject m_pathPrefab;
+        [SerializeField] private GameObject m_cornerPrefab;
 
         private List<GameObject> _spawnedChildren = new List<GameObject>();
         #endregion
@@ -90,55 +100,19 @@ namespace MazeGeneration
         {
             m_generationAlgorithm.OnCellChanged += (a) => Build();
             Generate();
+            Build();
         }
         #endregion
 
         #region MazeGenerator
         public void Generate()
         {
-            int width = m_gridSize.x * 2 + 1;
-            int height = m_gridSize.y * 2 + 1;
+            m_maze = new Maze(m_gridSize);
 
-            m_generatedGrid = new GridCell[width, height];
-
-            for (int x = 0; x < width; ++x)
-            {
-                for (int y = 0; y < height; ++y)
-                {
-                    if (x == 0
-                        || x == width - 1
-                        || y == 0
-                        || y == height - 1)
-                    {
-                        m_generatedGrid[x, y] = new EdgeCell(x, y);
-                    }
-                    else if (x % 2 == 1
-                        && y % 2 == 1)
-                    {
-                        m_generatedGrid[x, y] = new PathCell(x, y);
-                    }
-                    else
-                    {
-                        m_generatedGrid[x, y] = new WallCell(x, y);
-                    }
-                }
-            }
+            Build();
 
             //m_roomGenerator?.GenerateRooms(ref m_generatedGrid);
-            m_generationAlgorithm?.GeneratePath(ref m_generatedGrid, m_gridSize);
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for (int x = 0; x < width; ++x)
-            {
-                for (int y = 0; y < height; ++y)
-                {
-                    stringBuilder.Append(m_generatedGrid[x, y]);
-                }
-                stringBuilder.Append("\n");
-            }
-
-            Debug.Log(stringBuilder.ToString());
+            StartCoroutine(m_generationAlgorithm?.GeneratePath(m_maze, m_gridSize));
         }
 
         public void Build()
@@ -146,11 +120,11 @@ namespace MazeGeneration
             _spawnedChildren.ForEach(go => Destroy(go));
             _spawnedChildren.Clear();
 
-            for (int x = 0; x < m_generatedGrid.GetLength(0); ++x)
+            for (int x = 0; x < m_maze.Grid.GetLength(0); ++x)
             {
-                for (int y = 0; y < m_generatedGrid.GetLength(1); ++y)
+                for (int y = 0; y < m_maze.Grid.GetLength(1); ++y)
                 {
-                    GridCell cell = m_generatedGrid[x, y];
+                    GridCell cell = m_maze.Grid[x, y];
                     Vector3 worldPos = new Vector3(
                         x, 0, y
                     );
@@ -168,6 +142,10 @@ namespace MazeGeneration
                     else if (cell is WallCell)
                     {
                         prefab = m_wallPrefab;
+                    }
+                    if (cell is CornerCell)
+                    {
+                        prefab = m_cornerPrefab;
                     }
 
                     if (prefab)

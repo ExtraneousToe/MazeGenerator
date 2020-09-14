@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 286394add06daf94b9c89793951e3dd7, type: 3}
-  m_Name: DFS
+  m_Script: {fileID: 11500000, guid: c856d9f2aca15fa4f8c82398d14a5c11, type: 3}
+  m_Name: Krustal
   m_EditorClassIdentifier: 
-  m_routineDelay: 0.0005
+  m_routineDelay: 0.001

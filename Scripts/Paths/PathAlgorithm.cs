@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityTools;
 
-namespace MazeGeneration
+namespace MazeGeneration.PathGeneration
 {
     public abstract class PathAlgorithm : ScriptableObject
     {
@@ -15,10 +15,18 @@ namespace MazeGeneration
         #region Variables
         [SerializeField]
         private float m_routineDelay = 0.1f;
-        public float RoutineDelay => m_routineDelay; 
+        public float RoutineDelay => m_routineDelay;
+
+        protected List<Vector2Int> m_directionsList = new List<Vector2Int>(new Vector2Int[]
+        {
+            Vector2Int.up,
+            Vector2Int.right,
+            Vector2Int.down,
+            Vector2Int.left
+        });
         #endregion
 
-        public abstract void GeneratePath(ref GridCell[,] aGrid, Vector2Int aSize);
+        public abstract IEnumerator GeneratePath(Maze aMaze, Vector2Int aSize);
 
         protected void CellChanged(Vector2Int aCoord)
         {

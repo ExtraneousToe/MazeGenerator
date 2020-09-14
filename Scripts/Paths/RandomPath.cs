@@ -5,27 +5,12 @@ using UnityTools;
 
 namespace MazeGeneration.PathGeneration
 {
-    public class SelectedCell : GridCell
+    [CreateAssetMenu(menuName = "Maze/Path/Random", fileName = "Random")]
+    public class RandomPath : PathAlgorithm
     {
-        public SelectedCell(Vector2Int aCoord) : base(aCoord) { }
-        public SelectedCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
-        public override string ToString() => "S";
-    }
-
-    [CreateAssetMenu(menuName = "Maze/Path/DFS", fileName = "DFS")]
-    public class DepthFirstPath : PathAlgorithm
-    {
-        private Stack<KeyValuePair<GridCell,GridCell>> FrontierStack { get; set; }
+        private List<KeyValuePair<GridCell, GridCell>> FrontierStack { get; set; }
         private List<GridCell> UnvisitedCells { get; set; }
         private List<GridCell> VisitedCells { get; set; }
-
-        private List<Vector2Int> DirectionsList = new List<Vector2Int>(new Vector2Int[]
-        {
-            Vector2Int.up,
-            Vector2Int.right,
-            Vector2Int.down,
-            Vector2Int.left
-        });
 
         public override IEnumerator GeneratePath(Maze aMaze, Vector2Int aSize)
         {
@@ -41,6 +26,7 @@ namespace MazeGeneration.PathGeneration
 
             UnvisitedCells = new List<GridCell>();
             VisitedCells = new List<GridCell>();
+            FrontierStack = new List<KeyValuePair<GridCell, GridCell>>();
 
             for (int x = 0; x < aSize.x; ++x)
             {
@@ -57,16 +43,14 @@ namespace MazeGeneration.PathGeneration
 
             GridCell currentCell = aMaze.Grid[fX, fY];
 
-            FrontierStack = new Stack<KeyValuePair<GridCell, GridCell>>();
-
             do
             {
                 // if not yet visited
                 if (UnvisitedCells.Contains(currentCell))
                 {
                     // shuffle the directions and try stacking the connecting cells
-                    DirectionsList = new List<Vector2Int>(DirectionsList.Shuffle());
-                    foreach (Vector2Int direction in DirectionsList)
+                    m_directionsList = new List<Vector2Int>(m_directionsList.Shuffle());
+                    foreach (Vector2Int direction in m_directionsList)
                     {
                         int pX, pY;
                         pX = currentCell.Coord.x + direction.x * 2;
@@ -83,7 +67,7 @@ namespace MazeGeneration.PathGeneration
 
                         if (UnvisitedCells.Contains(possibleCell))
                         {
-                            FrontierStack.Push(
+                            FrontierStack.Add(
                                 new KeyValuePair<GridCell, GridCell>(
                                 possibleCell, // to
                                 currentCell // from
@@ -102,9 +86,11 @@ namespace MazeGeneration.PathGeneration
 
                 if (FrontierStack.Count > 0)
                 {
+                    int randomIndex = MOARandom.Instance.GetRange(0, FrontierStack.Count - 1);
                     // select the next cell in the frontier stack
-                    KeyValuePair<GridCell, GridCell> nextCellPair = FrontierStack.Pop();
+                    KeyValuePair<GridCell, GridCell> nextCellPair = FrontierStack[randomIndex];
                     GridCell nextCell = nextCellPair.Key;
+                    FrontierStack.RemoveAt(randomIndex);
 
                     // some cells might've been connected previously
                     if (!VisitedCells.Contains(nextCell))
