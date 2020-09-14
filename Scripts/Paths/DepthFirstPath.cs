@@ -29,7 +29,7 @@ namespace MazeGeneration
             Vector2Int.left
         });
 
-        public override IEnumerator GeneratePath(ref GridCell[,] aGrid, Vector2Int aSize)
+        public override void GeneratePath(ref GridCell[,] aGrid, Vector2Int aSize)
         {
             int maxX, maxY;
             maxX = aGrid.GetLength(0);

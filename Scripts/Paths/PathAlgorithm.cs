@@ -18,6 +18,11 @@ namespace MazeGeneration
         public float RoutineDelay => m_routineDelay; 
         #endregion
 
-        public abstract IEnumerator GeneratePath(ref GridCell[,] aGrid, Vector2Int aSize);
+        public abstract void GeneratePath(ref GridCell[,] aGrid, Vector2Int aSize);
+
+        protected void CellChanged(Vector2Int aCoord)
+        {
+            OnCellChanged?.Invoke(aCoord);
+        }
     } 
 }
