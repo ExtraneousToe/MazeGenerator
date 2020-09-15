@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 44daa5b2f36a5164386ff3d82b51a24d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_pathPrefab: {fileID: 2086728439932262849, guid: bd5bd97b209514c40a8a42d785c7ca9d,
+      type: 3}
+  - m_innerWallPrefab: {fileID: 2086728439932262849, guid: ebac4806ca032be41abfc92799ccc100,
+      type: 3}
+  - m_innerCornerPrefab: {fileID: 2086728439932262849, guid: d7cd83f4033a584458cddd4211b773c3,
+      type: 3}
+  - m_edgeWallPrefab: {fileID: 2086728439932262849, guid: cb71a44237fd9dd4ba73c2481c2dcd74,
+      type: 3}
+  - m_edgeCornerPrefab: {fileID: 2086728439932262849, guid: 287f350da24c26b429a59e3a39fe8f4d,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -32,10 +32,65 @@ namespace MazeGeneration.Building
         #endregion
 
         #region MazeBuilder
-        public abstract void BuildMaze(Maze aMaze);
-        public abstract void UpdateConstruction(Maze aMaze, Vector2Int aUpdatedCell);
+        public void BuildMaze(Maze aMaze)
+        {
+            ClearConstruction();
+
+            SpawnedGrid = new Transform[aMaze.Grid.GetLength(0), aMaze.Grid.GetLength(1)];
+
+            for (int x = 0; x < aMaze.Grid.GetLength(0); ++x)
+            {
+                for (int y = 0; y < aMaze.Grid.GetLength(1); ++y)
+                {
+                    GameObject prefab = GetPrefab(aMaze.Grid[x, y]);
+
+                    if (prefab)
+                    {
+                        GetSpawnPositionAndRotation(aMaze, new Vector2Int(x, y), out Vector3 spawnPosition, out Quaternion spawnRotation);
+
+                        var newTransform = Instantiate(
+                            prefab.transform,
+                            spawnPosition,
+                            spawnRotation,
+                            transform
+                        );
+                        newTransform.name = $"[{x},{y}] {prefab.name}";
+
+                        SpawnedGrid[x, y] = newTransform;
+                    }
+                }
+            }
+        }
+
+        public void UpdateConstruction(Maze aMaze, Vector2Int aUpdatedCell)
+        {
+            Transform currentPoint = SpawnedGrid[aUpdatedCell.x, aUpdatedCell.y];
+
+            if (currentPoint)
+            {
+                Destroy(currentPoint.gameObject);
+            }
+
+            GameObject prefab = GetPrefab(aMaze.Grid[aUpdatedCell.x, aUpdatedCell.y]);
+
+            if (prefab)
+            {
+                GetSpawnPositionAndRotation(aMaze, aUpdatedCell, out Vector3 spawnPosition, out Quaternion spawnRotation);
+
+                var newTransform = Instantiate(
+                    prefab.transform,
+                    spawnPosition,
+                    spawnRotation,
+                    transform
+                );
+                newTransform.name = $"[{aUpdatedCell.x},{aUpdatedCell.y}] {prefab.name}";
+
+                SpawnedGrid[aUpdatedCell.x, aUpdatedCell.y] = newTransform;
+            }
+        }
 
         protected abstract GameObject GetPrefab(GridCell aCell);
+        protected abstract void GetSpawnPositionAndRotation(Maze aMaze, Vector2Int aCoord, out Vector3 outPosition, out Quaternion outRotation);
 
         public void ClearConstruction()
         {
@@ -45,7 +100,10 @@ namespace MazeGeneration.Building
             {
                 for (int y = 0; y < SpawnedGrid.GetLength(1); ++y)
                 {
-                    Destroy(SpawnedGrid[x, y].gameObject);
+                    if (SpawnedGrid[x, y])
+                    {
+                        Destroy(SpawnedGrid[x, y].gameObject);
+                    }
                 }
             }
 

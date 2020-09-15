@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 286394add06daf94b9c89793951e3dd7, type: 3}
   m_Name: DFS
   m_EditorClassIdentifier: 
-  m_routineDelay: 0.0005
+  m_routineDelay: 0.05
