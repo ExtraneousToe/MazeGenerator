@@ -17,8 +17,7 @@ namespace MazeGeneration
         #region Variables
         #region Fields
         [Header("Size")]
-        [SerializeField] private bool m_uniformCells;
-        [SerializeField]private Vector2Int m_gridSize = new Vector2Int(10, 10);
+        [SerializeField] private Vector2Int m_gridSize = new Vector2Int(10, 10);
 
         [Header("Rooms")]
         [SerializeField] private RoomGenerator m_roomGenerator;
@@ -39,6 +38,11 @@ namespace MazeGeneration
         #region Mono
         protected void Start()
         {
+            for (int i = 0; i < 2; ++i)
+            {
+                m_gridSize[i] = Mathf.Max(2, m_gridSize[i]);
+            }
+
             m_generationAlgorithm.OnCellChanged += (a) => m_builder?.UpdateConstruction(m_maze, a);
             Generate();
         }
@@ -52,7 +56,7 @@ namespace MazeGeneration
 
         public void Generate()
         {
-            m_maze = new Maze(m_gridSize, m_uniformCells);
+            m_maze = new Maze(m_gridSize);
 
             m_builder?.BuildMaze(m_maze);
 
@@ -62,7 +66,7 @@ namespace MazeGeneration
             {
                 if (m_roomGenerator) yield return StartCoroutine(m_roomGenerator?.GenerateRooms(m_maze));
                 if (m_generationAlgorithm) yield return StartCoroutine(m_generationAlgorithm?.GeneratePath(m_maze, m_gridSize));
-                
+
                 Vector2Int[] modPoints = m_maze.MarkDeadEnds();
                 foreach (Vector2Int point in modPoints)
                 {

@@ -99,7 +99,7 @@ namespace MazeGeneration.Paths
                     wallIndex /= 2;
                     wallIndex = cellA.Coord + wallIndex;
 
-                    aMaze.ReplaceWall(wallIndex);
+                    aMaze.CarveOutWall(wallIndex);
 
                     --totalSets;
 

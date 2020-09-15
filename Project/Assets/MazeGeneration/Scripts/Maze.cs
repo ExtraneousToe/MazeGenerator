@@ -14,7 +14,7 @@ namespace MazeGeneration
         #region Variables
         #region Fields
         private GridCell[,] m_grid;
-        private bool m_uniformCells;
+        private Vector2Int m_size;
 
         private List<DeadEndCell> m_deadEndsList;
         private List<Vector2Int> m_modifiedPoints;
@@ -22,18 +22,17 @@ namespace MazeGeneration
 
         #region Properties
         public GridCell[,] Grid => m_grid;
-        public bool UniformCells => m_uniformCells;
+        public Vector2Int Size => m_size;
         #endregion
         #endregion
 
         #region Constructors
-        public Maze(Vector2Int aSize, bool aUniformCells)
+        public Maze(Vector2Int aSize)
         {
             m_deadEndsList = new List<DeadEndCell>();
             m_modifiedPoints = new List<Vector2Int>();
 
-            m_uniformCells = aUniformCells;
-
+            m_size = aSize;
             int width = aSize.x * 2 + 1;
             int height = aSize.y * 2 + 1;
 
@@ -77,16 +76,9 @@ namespace MazeGeneration
         #endregion
 
         #region Mutators
-        public void ReplaceWall(Vector2Int aCoord)
+        public void CarveOutWall(Vector2Int aCoord)
         {
-            if (UniformCells)
-            {
-                Grid[aCoord.x, aCoord.y] = new PathCell(aCoord);
-            }
-            else
-            {
-                Grid[aCoord.x, aCoord.y] = new NullCell(aCoord);
-            }
+            Grid[aCoord.x, aCoord.y] = new NullCell(aCoord);
         }
 
         public Vector2Int[] MarkDeadEnds()
@@ -115,9 +107,10 @@ namespace MazeGeneration
                         if (0 <= cX && cX < maxX &&
                             0 <= cY && cY < maxY)
                         {
-                            WallCell checkCell = Grid[cX, cY] as WallCell;
+                            WallCell wallCheck = Grid[cX, cY] as WallCell;
+                            EdgeWallCell edgeCheck = Grid[cX, cY] as EdgeWallCell;
 
-                            if (checkCell != null)
+                            if (wallCheck != null || edgeCheck != null)
                             {
                                 --validPaths;
                             }
@@ -142,14 +135,14 @@ namespace MazeGeneration
 
             // find 'corridor ends'
             // path cells that have only one un-blocked connection
-            int index = MOARandom.Instance.GetRange(0, m_deadEndsList.Count);
+            int index = MOARandom.Instance.GetRange(0, m_deadEndsList.Count - 1);
 
             GridCell startCell = m_deadEndsList[index];
             m_deadEndsList.RemoveAt(index);
             startCell = Grid[startCell.Coord.x, startCell.Coord.y] = new StartCell(startCell.Coord);
             m_deadEndsList.Add(startCell as StartCell);
 
-            index = MOARandom.Instance.GetRange(0, m_deadEndsList.Count);
+            index = MOARandom.Instance.GetRange(0, m_deadEndsList.Count - 1);
             GridCell endCell = m_deadEndsList[index];
             m_deadEndsList.RemoveAt(index);
             endCell = Grid[endCell.Coord.x, endCell.Coord.y] = new EndCell(endCell.Coord);

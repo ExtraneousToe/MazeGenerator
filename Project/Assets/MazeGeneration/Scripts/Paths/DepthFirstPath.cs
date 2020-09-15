@@ -116,7 +116,7 @@ namespace MazeGeneration.Paths
                         betweenCoord /= 2;
                         betweenCoord = fromCell.Coord + betweenCoord;
 
-                        aMaze.ReplaceWall(betweenCoord);
+                        aMaze.CarveOutWall(betweenCoord);
 
                         // select the new cell
                         currentCell = nextCell;
