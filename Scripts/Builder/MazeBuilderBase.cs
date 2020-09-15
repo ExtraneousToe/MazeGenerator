@@ -46,17 +46,7 @@ namespace MazeGeneration.Building
 
                     if (prefab)
                     {
-                        GetSpawnPositionAndRotation(aMaze, new Vector2Int(x, y), out Vector3 spawnPosition, out Quaternion spawnRotation);
-
-                        var newTransform = Instantiate(
-                            prefab.transform,
-                            spawnPosition,
-                            spawnRotation,
-                            transform
-                        );
-                        newTransform.name = $"[{x},{y}] {prefab.name}";
-
-                        SpawnedGrid[x, y] = newTransform;
+                        SpawnPiece(prefab, aMaze, x, y);
                     }
                 }
             }
@@ -75,17 +65,7 @@ namespace MazeGeneration.Building
 
             if (prefab)
             {
-                GetSpawnPositionAndRotation(aMaze, aUpdatedCell, out Vector3 spawnPosition, out Quaternion spawnRotation);
-
-                var newTransform = Instantiate(
-                    prefab.transform,
-                    spawnPosition,
-                    spawnRotation,
-                    transform
-                );
-                newTransform.name = $"[{aUpdatedCell.x},{aUpdatedCell.y}] {prefab.name}";
-
-                SpawnedGrid[aUpdatedCell.x, aUpdatedCell.y] = newTransform;
+                SpawnPiece(prefab, aMaze, aUpdatedCell.x, aUpdatedCell.y);
             }
         }
 
@@ -108,6 +88,21 @@ namespace MazeGeneration.Building
             }
 
             SpawnedGrid = null;
+        }
+
+        private void SpawnPiece(GameObject aPiecePrefab, Maze aMaze, int aX, int aY)
+        {
+            GetSpawnPositionAndRotation(aMaze, new Vector2Int(aX, aY), out Vector3 spawnPosition, out Quaternion spawnRotation);
+
+            var newTransform = Instantiate(
+                aPiecePrefab.transform,
+                transform
+            );
+            newTransform.localPosition = spawnPosition;
+            newTransform.localRotation = spawnRotation;
+            newTransform.name = $"[{aX},{aY}] {aPiecePrefab.name}";
+
+            SpawnedGrid[aX, aY] = newTransform;
         }
         #endregion
     }

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityTools;
 
 namespace MazeGeneration
 {
@@ -13,6 +15,9 @@ namespace MazeGeneration
         #region Fields
         private GridCell[,] m_grid;
         private bool m_uniformCells;
+
+        private List<DeadEndCell> m_deadEndsList;
+        private List<Vector2Int> m_modifiedPoints;
         #endregion
 
         #region Properties
@@ -24,6 +29,9 @@ namespace MazeGeneration
         #region Constructors
         public Maze(Vector2Int aSize, bool aUniformCells)
         {
+            m_deadEndsList = new List<DeadEndCell>();
+            m_modifiedPoints = new List<Vector2Int>();
+
             m_uniformCells = aUniformCells;
 
             int width = aSize.x * 2 + 1;
@@ -42,22 +50,22 @@ namespace MazeGeneration
                     {
                         if (x % 2 == 0 && y % 2 == 0)
                         {
-                            m_grid[x, y] = new EdgeCornerCell(x, y);
+                            Grid[x, y] = new EdgeCornerCell(x, y);
                         }
                         else
                         {
-                            m_grid[x, y] = new EdgeWallCell(x, y);
+                            Grid[x, y] = new EdgeWallCell(x, y);
                         }
                     }
                     else if (x % 2 == 1
                         && y % 2 == 1)
                     {
-                        m_grid[x, y] = new PathCell(x, y);
+                        Grid[x, y] = new PathCell(x, y);
                     }
                     else if (x % 2 == 0
                         && y % 2 == 0)
                     {
-                        m_grid[x, y] = new CornerCell(x, y);
+                        Grid[x, y] = new CornerCell(x, y);
                     }
                     else
                     {
@@ -73,25 +81,81 @@ namespace MazeGeneration
         {
             if (UniformCells)
             {
-                m_grid[aCoord.x, aCoord.y] = new PathCell(aCoord);
+                Grid[aCoord.x, aCoord.y] = new PathCell(aCoord);
             }
             else
             {
-                m_grid[aCoord.x, aCoord.y] = new NullCell(aCoord);
+                Grid[aCoord.x, aCoord.y] = new NullCell(aCoord);
             }
         }
 
-        public void CreateStartAndEnd()
+        public Vector2Int[] MarkDeadEnds()
         {
-            throw new NotImplementedException();
+            m_modifiedPoints.Clear();
+
+            int maxX = Grid.GetLength(0);
+            int maxY = Grid.GetLength(1);
+
+            for (int x = 0; x < maxX; ++x)
+            {
+                for (int y = 0; y < maxY; ++y)
+                {
+                    PathCell cell = Grid[x, y] as PathCell;
+
+                    if (cell == null) continue;
+
+                    int validPaths = 4;
+
+                    foreach (var direction in new Vector2Int[] { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left })
+                    {
+                        int cX, cY;
+                        cX = x + direction.x;
+                        cY = y + direction.y;
+
+                        if (0 <= cX && cX < maxX &&
+                            0 <= cY && cY < maxY)
+                        {
+                            WallCell checkCell = Grid[cX, cY] as WallCell;
+
+                            if (checkCell != null)
+                            {
+                                --validPaths;
+                            }
+                        }
+                    }
+
+                    if (validPaths == 1)
+                    {
+                        m_modifiedPoints.Add(new Vector2Int(x, y));
+                        Grid[x, y] = new DeadEndCell(x, y);
+                        m_deadEndsList.Add(Grid[x, y] as DeadEndCell);
+                    }
+                }
+            }
+
+            return m_modifiedPoints.ToArray();
+        }
+
+        public Vector2Int[] CreateStartAndEnd()
+        {
+            m_modifiedPoints.Clear();
 
             // find 'corridor ends'
             // path cells that have only one un-blocked connection
-        }
+            int index = MOARandom.Instance.GetRange(0, m_deadEndsList.Count);
 
-        private GridCell[] GetConnectedCells(Vector2Int aCoord)
-        {
-            throw new NotImplementedException();
+            GridCell startCell = m_deadEndsList[index];
+            m_deadEndsList.RemoveAt(index);
+            startCell = Grid[startCell.Coord.x, startCell.Coord.y] = new StartCell(startCell.Coord);
+            m_deadEndsList.Add(startCell as StartCell);
+
+            index = MOARandom.Instance.GetRange(0, m_deadEndsList.Count);
+            GridCell endCell = m_deadEndsList[index];
+            m_deadEndsList.RemoveAt(index);
+            endCell = Grid[endCell.Coord.x, endCell.Coord.y] = new EndCell(endCell.Coord);
+            m_deadEndsList.Add(endCell as EndCell);
+
+            return m_modifiedPoints.ToArray();
         }
         #endregion
     }

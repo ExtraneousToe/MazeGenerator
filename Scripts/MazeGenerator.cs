@@ -62,6 +62,18 @@ namespace MazeGeneration
             {
                 if (m_roomGenerator) yield return StartCoroutine(m_roomGenerator?.GenerateRooms(m_maze));
                 if (m_generationAlgorithm) yield return StartCoroutine(m_generationAlgorithm?.GeneratePath(m_maze, m_gridSize));
+                
+                Vector2Int[] modPoints = m_maze.MarkDeadEnds();
+                foreach (Vector2Int point in modPoints)
+                {
+                    m_builder?.UpdateConstruction(m_maze, point);
+                }
+
+                modPoints = m_maze.CreateStartAndEnd();
+                foreach (Vector2Int point in modPoints)
+                {
+                    m_builder?.UpdateConstruction(m_maze, point);
+                }
 
                 m_builder?.BuildMaze(m_maze);
             }
