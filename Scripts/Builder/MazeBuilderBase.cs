@@ -12,6 +12,7 @@ namespace MazeGeneration.Building
         #region Fields
         private MazeGenerator m_mazeGenerator;
         private Transform[,] m_spawnedGrid;
+        private Transform m_buildParent;
         #endregion
 
         #region Properties
@@ -20,6 +21,8 @@ namespace MazeGeneration.Building
             get => m_spawnedGrid;
             protected set => m_spawnedGrid = value;
         }
+
+        protected Transform BuildParent => m_buildParent ?? (m_buildParent = new GameObject("Build Parent").transform);
         #endregion
         #endregion
 
@@ -29,11 +32,18 @@ namespace MazeGeneration.Building
             m_mazeGenerator = GetComponent<MazeGenerator>();
             m_mazeGenerator?.RegisterBuilder(this);
         }
+
+        protected void Awake()
+        {
+            BuildParent.SetParent(transform);
+        }
         #endregion
 
         #region MazeBuilder
         public void BuildMaze(Maze aMaze)
         {
+            InitialiseBuildParent(aMaze);
+
             ClearConstruction();
 
             SpawnedGrid = new Transform[aMaze.Grid.GetLength(0), aMaze.Grid.GetLength(1)];
@@ -69,6 +79,7 @@ namespace MazeGeneration.Building
             }
         }
 
+        protected abstract void InitialiseBuildParent(Maze aMaze);
         protected abstract GameObject GetPrefab(GridCell aCell);
         protected abstract void GetSpawnPositionAndRotation(Maze aMaze, Vector2Int aCoord, out Vector3 outPosition, out Quaternion outRotation);
 
@@ -96,7 +107,7 @@ namespace MazeGeneration.Building
 
             var newTransform = Instantiate(
                 aPiecePrefab.transform,
-                transform
+                BuildParent
             );
             newTransform.localPosition = spawnPosition;
             newTransform.localRotation = spawnRotation;

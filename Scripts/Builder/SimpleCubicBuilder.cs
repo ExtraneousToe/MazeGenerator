@@ -19,8 +19,17 @@ namespace MazeGeneration.Building
         #endregion
         #endregion
 
-        #region MazeBuilderBase
+        #region Mono
         #endregion
+
+        #region MazeBuilderBase
+        protected override void InitialiseBuildParent(Maze aMaze)
+        {
+            BuildParent.localPosition = -new Vector3(
+                aMaze.Grid.GetLength(0) - 1, 
+                0,
+                aMaze.Grid.GetLength(1) - 1) / 2;
+        }
 
         protected override void GetSpawnPositionAndRotation(Maze aMaze, Vector2Int aCoord, out Vector3 outPosition, out Quaternion outRotation)
         {
@@ -51,5 +60,6 @@ namespace MazeGeneration.Building
 
             return null;
         }
+        #endregion
     }
 }
