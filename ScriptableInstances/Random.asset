@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 437f377b09966684db063f313cd19787, type: 3}
   m_Name: Random
   m_EditorClassIdentifier: 
-  m_routineDelay: 0.01
+  m_routineDelay: 0.001

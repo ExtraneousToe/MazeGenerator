@@ -9,15 +9,23 @@ namespace MazeGeneration
 {
     public class Maze
     {
+        #region Variables
+        #region Fields
         private GridCell[,] m_grid;
+        private bool m_uniformCells;
+        #endregion
 
-        public GridCell[,] Grid
-        {
-            get => m_grid;
-        }
+        #region Properties
+        public GridCell[,] Grid => m_grid;
+        public bool UniformCells => m_uniformCells;
+        #endregion
+        #endregion
 
-        public Maze(Vector2Int aSize)
+        #region Constructors
+        public Maze(Vector2Int aSize, bool aUniformCells)
         {
+            m_uniformCells = aUniformCells;
+
             int width = aSize.x * 2 + 1;
             int height = aSize.y * 2 + 1;
 
@@ -32,7 +40,14 @@ namespace MazeGeneration
                         || y == 0
                         || y == height - 1)
                     {
-                        m_grid[x, y] = new EdgeCell(x, y);
+                        if (x % 2 == 0 && y % 2 == 0)
+                        {
+                            m_grid[x, y] = new EdgeCornerCell(x, y);
+                        }
+                        else
+                        {
+                            m_grid[x, y] = new EdgeWallCell(x, y);
+                        }
                     }
                     else if (x % 2 == 1
                         && y % 2 == 1)
@@ -51,5 +66,33 @@ namespace MazeGeneration
                 }
             }
         }
+        #endregion
+
+        #region Mutators
+        public void ReplaceWall(Vector2Int aCoord)
+        {
+            if (UniformCells)
+            {
+                m_grid[aCoord.x, aCoord.y] = new PathCell(aCoord);
+            }
+            else
+            {
+                m_grid[aCoord.x, aCoord.y] = new NullCell(aCoord);
+            }
+        }
+
+        public void CreateStartAndEnd()
+        {
+            throw new NotImplementedException();
+
+            // find 'corridor ends'
+            // path cells that have only one un-blocked connection
+        }
+
+        private GridCell[] GetConnectedCells(Vector2Int aCoord)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

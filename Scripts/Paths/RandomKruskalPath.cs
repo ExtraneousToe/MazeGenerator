@@ -67,28 +67,6 @@ namespace MazeGeneration.Paths
 
                         Pairs.Add(new KeyValuePair<GridCell, GridCell>(cellA, cellC));
                     }
-
-                    //if (!Sets.ContainsKey(cellB))
-                    //{
-                    //    setB = new HashSet<GridCell>
-                    //    {
-                    //        cellB
-                    //    };
-                    //    Sets.Add(cellB, setB);
-                    //}
-
-                    //cellB = aMaze.Grid[
-                    //    1 + (x) * 2,
-                    //    1 + (y + 1) * 2
-                    //];
-                    //if (!Sets.ContainsKey(cellB))
-                    //{
-                    //    setB = new HashSet<GridCell>
-                    //    {
-                    //        cellB
-                    //    };
-                    //    Sets.Add(cellB, setB);
-                    //}
                 }
             }
 
@@ -120,10 +98,8 @@ namespace MazeGeneration.Paths
                     Vector2Int wallIndex = cellB.Coord - cellA.Coord;
                     wallIndex /= 2;
                     wallIndex = cellA.Coord + wallIndex;
-                    aMaze.Grid[
-                        wallIndex.x,
-                        wallIndex.y
-                    ] = new PathCell(wallIndex);
+
+                    aMaze.ReplaceWall(wallIndex);
 
                     --totalSets;
 

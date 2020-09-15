@@ -102,10 +102,7 @@ namespace MazeGeneration.Paths
                         betweenCoord /= 2;
                         betweenCoord = fromCell.Coord + betweenCoord;
 
-                        aMaze.Grid[
-                            betweenCoord.x,
-                            betweenCoord.y
-                        ] = new PathCell(betweenCoord);
+                        aMaze.ReplaceWall(betweenCoord);
 
                         // select the new cell
                         currentCell = nextCell;

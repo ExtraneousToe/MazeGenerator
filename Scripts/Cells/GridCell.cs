@@ -27,11 +27,29 @@ namespace MazeGeneration
         public EdgeCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
         public override string ToString() => "0";
     }
+    public class EdgeWallCell : EdgeCell
+    {
+        public EdgeWallCell(Vector2Int aCoord) : base(aCoord) { }
+        public EdgeWallCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
+        public override string ToString() => "0";
+    }
+    public class EdgeCornerCell : EdgeCell
+    {
+        public EdgeCornerCell(Vector2Int aCoord) : base(aCoord) { }
+        public EdgeCornerCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
+        public override string ToString() => "0";
+    }
     public class WallCell : GridCell
     {
         public WallCell(Vector2Int aCoord) : base(aCoord) { }
         public WallCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
         public override string ToString() => "x";
+    }
+    public class NullCell : GridCell
+    {
+        public NullCell(Vector2Int aCoord) : base(aCoord) { }
+        public NullCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
+        public override string ToString() => " ";
     }
     public class CornerCell : GridCell
     {
@@ -44,5 +62,17 @@ namespace MazeGeneration
         public PathCell(Vector2Int aCoord) : base(aCoord) { }
         public PathCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
         public override string ToString() => "+";
+    }
+    public class StartCell : PathCell
+    {
+        public StartCell(Vector2Int aCoord) : base(aCoord) { }
+        public StartCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
+        public override string ToString() => "S";
+    }
+    public class EndCell : PathCell
+    {
+        public EndCell(Vector2Int aCoord) : base(aCoord) { }
+        public EndCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
+        public override string ToString() => "E";
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -18,8 +17,8 @@ namespace MazeGeneration
         #region Variables
         #region Fields
         [Header("Size")]
-        [SerializeField]
-        private Vector2Int m_gridSize = new Vector2Int(10, 10);
+        [SerializeField] private bool m_uniformCells;
+        [SerializeField]private Vector2Int m_gridSize = new Vector2Int(10, 10);
 
         [Header("Rooms")]
         [SerializeField] private RoomGenerator m_roomGenerator;
@@ -31,8 +30,6 @@ namespace MazeGeneration
 
         [Header("Building")]
         [SerializeField] private MazeBuilderBase m_builder;
-
-        private List<GameObject> _spawnedChildren = new List<GameObject>();
         #endregion
 
         #region Properties
@@ -55,16 +52,17 @@ namespace MazeGeneration
 
         public void Generate()
         {
-            m_maze = new Maze(m_gridSize);
+            m_maze = new Maze(m_gridSize, m_uniformCells);
 
             m_builder?.BuildMaze(m_maze);
 
-            //m_roomGenerator?.GenerateRooms(ref m_generatedGrid);
             StartCoroutine(Routine());
 
             IEnumerator Routine()
             {
-                yield return StartCoroutine(m_generationAlgorithm?.GeneratePath(m_maze, m_gridSize));
+                if (m_roomGenerator) yield return StartCoroutine(m_roomGenerator?.GenerateRooms(m_maze));
+                if (m_generationAlgorithm) yield return StartCoroutine(m_generationAlgorithm?.GeneratePath(m_maze, m_gridSize));
+
                 m_builder?.BuildMaze(m_maze);
             }
         }
