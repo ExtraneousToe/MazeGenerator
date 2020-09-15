@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MazeGeneration.RoomGeneration
+namespace MazeGeneration.Rooms
 {
     public abstract class RoomGenerator : ScriptableObject
     {

@@ -246,6 +246,7 @@ GameObject:
   m_Component:
   - component: {fileID: 724867239}
   - component: {fileID: 724867238}
+  - component: {fileID: 724867240}
   m_Layer: 0
   m_Name: MazeGeneration
   m_TagString: Untagged
@@ -269,14 +270,7 @@ MonoBehaviour:
   m_roomGenerator: {fileID: 0}
   m_generationAlgorithm: {fileID: 11400000, guid: 397a617c2b206744c99313e40cd880cc,
     type: 2}
-  m_wallPrefab: {fileID: 2086728439932262849, guid: 3479944382d66734f9e74ec06f1dc087,
-    type: 3}
-  m_edgePrefab: {fileID: 2086728439932262849, guid: 9f6300d204ebd434a9c91f7a6e628e44,
-    type: 3}
-  m_pathPrefab: {fileID: 2086728439932262849, guid: cc88e3f58f3b87e4c8ded18ce3b1798b,
-    type: 3}
-  m_cornerPrefab: {fileID: 2086728439932262849, guid: 9f6300d204ebd434a9c91f7a6e628e44,
-    type: 3}
+  m_builder: {fileID: 724867240}
 --- !u!4 &724867239
 Transform:
   m_ObjectHideFlags: 0
@@ -291,6 +285,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &724867240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 724867237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f75a5cf8ffa5f7c4695d2488d29da6d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_wallPrefab: {fileID: 2086728439932262849, guid: 3479944382d66734f9e74ec06f1dc087,
+    type: 3}
+  m_edgePrefab: {fileID: 2086728439932262849, guid: 9f6300d204ebd434a9c91f7a6e628e44,
+    type: 3}
+  m_pathPrefab: {fileID: 2086728439932262849, guid: cc88e3f58f3b87e4c8ded18ce3b1798b,
+    type: 3}
+  m_cornerPrefab: {fileID: 2086728439932262849, guid: b2135cd4745174f4db617fc6efcb4d20,
+    type: 3}
 --- !u!1 &2101222947
 GameObject:
   m_ObjectHideFlags: 0
