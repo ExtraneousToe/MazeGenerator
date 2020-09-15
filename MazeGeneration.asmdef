@@ -1,0 +1,17 @@
+{
+    "name": "MazeGeneration",
+    "references": [
+        "GUID:b203ef8972114ce42b7498ef91b3eb29"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        ""
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
