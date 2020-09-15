@@ -6,6 +6,12 @@ MonoImporter:
   defaultReferences:
   - m_pathPrefab: {fileID: 2086728439932262849, guid: bd5bd97b209514c40a8a42d785c7ca9d,
       type: 3}
+  - m_deadEndPathPrefab: {fileID: 1248646751920217412, guid: c1f7a13de1a4abb44a30c0181bf0c575,
+      type: 3}
+  - m_startPathPrefab: {fileID: 7964558082491939956, guid: 67c38ae85b186754c944061919e3b9b5,
+      type: 3}
+  - m_endPathPrefab: {fileID: 7964558082491939956, guid: 8a002d0f5ce276146a74b0a2161b6fc9,
+      type: 3}
   - m_innerWallPrefab: {fileID: 2086728439932262849, guid: ebac4806ca032be41abfc92799ccc100,
       type: 3}
   - m_innerCornerPrefab: {fileID: 2086728439932262849, guid: d7cd83f4033a584458cddd4211b773c3,

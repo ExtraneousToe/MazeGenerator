@@ -10,9 +10,17 @@ namespace MazeGeneration.Building
     {
         #region Variables
         #region Fields
+        [Header("Paths")]
         [SerializeField] private GameObject m_pathPrefab;
+        [SerializeField] private GameObject m_deadEndPathPrefab;
+        [SerializeField] private GameObject m_startPathPrefab;
+        [SerializeField] private GameObject m_endPathPrefab;
+
+        [Header("Inner Edges")]
         [SerializeField] private GameObject m_innerWallPrefab;
         [SerializeField] private GameObject m_innerCornerPrefab;
+        
+        [Header("Outer Edges")]
         [SerializeField] private GameObject m_edgeWallPrefab;
         [SerializeField] private GameObject m_edgeCornerPrefab;
 
@@ -30,14 +38,18 @@ namespace MazeGeneration.Building
 
         protected override void GetSpawnPositionAndRotation(Maze aMaze, Vector2Int aCoord, out Vector3 outPosition, out Quaternion outRotation)
         {
-            outPosition = new Vector3(aCoord.x, 0, aCoord.y) / 2;
+            outPosition = new Vector3(aCoord.x, 0, aCoord.y) / 2 * m_pathCellSize;
             outRotation = Quaternion.identity;
 
             GridCell cell = aMaze.Grid[aCoord.x, aCoord.y];
 
             if (cell is PathCell path)
             {
-                //outPosition /= 2;
+                // do nothing special
+            }
+            else if (cell is CornerCell corner)
+            {
+                // do nothing special
             }
             else if (cell is EdgeCell edge)
             {
@@ -50,12 +62,10 @@ namespace MazeGeneration.Building
                     {
                         outRotation = Quaternion.Euler(0, 90, 0);
                     }
-
-                    //outPosition -= new Vector3(1, 0, 1) / 2;
                 }
                 else if (cell is EdgeCornerCell edgeCorner)
                 {
-                    //outPosition /= 2;
+                    // do nothing special
                 }
             }
             else if (cell is WallCell wall)
@@ -67,12 +77,6 @@ namespace MazeGeneration.Building
                 {
                     outRotation = Quaternion.Euler(0, 90, 0);
                 }
-
-                //outPosition -= new Vector3(1, 0, 1) / 2;
-            }
-            else if (cell is CornerCell corner)
-            {
-                //outPosition /= 2;
             }
         }
 
@@ -82,12 +86,24 @@ namespace MazeGeneration.Building
 
             if (aCell is PathCell)
             {
+                if (aCell is DeadEndCell)
+                {
+                    if (aCell is StartCell)
+                    {
+                        return m_startPathPrefab;
+                    }
+                    else if (aCell is EndCell)
+                    {
+                        return m_endPathPrefab;
+                    }
+
+                    return m_deadEndPathPrefab;
+                }
+
                 return m_pathPrefab;
             }
             else if (aCell is EdgeCell)
             {
-                //UnityTools.Logger.LogMethod("Is Edge Cell");
-
                 if (aCell is EdgeWallCell)
                 {
                     return m_edgeWallPrefab;
@@ -97,7 +113,7 @@ namespace MazeGeneration.Building
                     return m_edgeCornerPrefab;
                 }
 
-                return m_edgeWallPrefab;
+                return m_edgeCornerPrefab;
             }
             else if (aCell is WallCell)
             {

@@ -63,13 +63,19 @@ namespace MazeGeneration
         public PathCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
         public override string ToString() => "+";
     }
-    public class StartCell : PathCell
+    public class DeadEndCell : PathCell
+    {
+        public DeadEndCell(Vector2Int aCoord) : base(aCoord) { }
+        public DeadEndCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
+        public override string ToString() => "+";
+    }
+    public class StartCell : DeadEndCell
     {
         public StartCell(Vector2Int aCoord) : base(aCoord) { }
         public StartCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
         public override string ToString() => "S";
     }
-    public class EndCell : PathCell
+    public class EndCell : DeadEndCell
     {
         public EndCell(Vector2Int aCoord) : base(aCoord) { }
         public EndCell(int aX, int aY) : this(new Vector2Int(aX, aY)) { }
