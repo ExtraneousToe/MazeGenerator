@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityTools;
 
-namespace MazeGeneration.PathGeneration
+namespace MazeGeneration.Paths
 {
     [CreateAssetMenu(menuName = "Maze/Path/Random", fileName = "Random")]
     public class RandomPath : PathAlgorithm
