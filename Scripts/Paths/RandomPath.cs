@@ -8,15 +8,27 @@ namespace MazeGeneration.Paths
     [CreateAssetMenu(menuName = "Maze/Path/Random", fileName = "Random")]
     public class RandomPath : PathAlgorithm
     {
+        #region Variables
+        #region Fields
+        private GridCell m_currentCell;
+        private int m_maxX;
+        private int m_maxY;
+        #endregion
+
+        #region Properties
         private List<KeyValuePair<GridCell, GridCell>> FrontierStack { get; set; }
         private List<GridCell> UnvisitedCells { get; set; }
         private List<GridCell> VisitedCells { get; set; }
 
-        public override IEnumerator GeneratePath(Maze aMaze, Vector2Int aSize)
+        protected override bool ShouldContinue => UnvisitedCells != null && UnvisitedCells.Count > 0;
+        #endregion
+        #endregion
+
+        #region PathAlgorithm
+        protected override void InitialiseAlgorithm(Maze aMaze, Vector2Int aSize)
         {
-            int maxX, maxY;
-            maxX = aMaze.Grid.GetLength(0);
-            maxY = aMaze.Grid.GetLength(1);
+            m_maxX = aMaze.Grid.GetLength(0);
+            m_maxY = aMaze.Grid.GetLength(1);
 
             int fX, fY;
 
@@ -41,92 +53,86 @@ namespace MazeGeneration.Paths
                 }
             }
 
-            GridCell currentCell = aMaze.Grid[fX, fY];
+            m_currentCell = aMaze.Grid[fX, fY];
+        }
 
-            do
+        protected override void StepAlgorithm(Maze aMaze, Vector2Int aSize)
+        {
+            // if not yet visited
+            if (UnvisitedCells.Contains(m_currentCell))
             {
-                // if not yet visited
-                if (UnvisitedCells.Contains(currentCell))
+                // shuffle the directions and try stacking the connecting cells
+                m_directionsList = new List<Vector2Int>(m_directionsList.Shuffle());
+                foreach (Vector2Int direction in m_directionsList)
                 {
-                    // shuffle the directions and try stacking the connecting cells
-                    m_directionsList = new List<Vector2Int>(m_directionsList.Shuffle());
-                    foreach (Vector2Int direction in m_directionsList)
+                    int pX, pY;
+                    pX = m_currentCell.Coord.x + direction.x * 2;
+                    pY = m_currentCell.Coord.y + direction.y * 2;
+
+                    if (pX < 0 || m_maxX <= pX ||
+                        pY < 0 || m_maxY <= pY)
                     {
-                        int pX, pY;
-                        pX = currentCell.Coord.x + direction.x * 2;
-                        pY = currentCell.Coord.y + direction.y * 2;
-
-                        if (pX < 0 || maxX <= pX ||
-                            pY < 0 || maxY <= pY)
-                        {
-                            // is out of range
-                            continue;
-                        }
-
-                        GridCell possibleCell = aMaze.Grid[pX, pY];
-
-                        if (UnvisitedCells.Contains(possibleCell))
-                        {
-                            FrontierStack.Add(
-                                new KeyValuePair<GridCell, GridCell>(
-                                possibleCell, // to
-                                currentCell // from
-                                )
-                            );
-                        }
+                        // is out of range
+                        continue;
                     }
 
-                    UnvisitedCells.Remove(currentCell);
-                    VisitedCells.Add(currentCell);
-                }
-                else
-                {
-                    // has been visited, do nothing?
-                }
+                    GridCell possibleCell = aMaze.Grid[pX, pY];
 
-                if (FrontierStack.Count > 0)
-                {
-                    int randomIndex = MOARandom.Instance.GetRange(0, FrontierStack.Count - 1);
-                    // select the next cell in the frontier stack
-                    KeyValuePair<GridCell, GridCell> nextCellPair = FrontierStack[randomIndex];
-                    GridCell nextCell = nextCellPair.Key;
-                    FrontierStack.RemoveAt(randomIndex);
-
-                    // some cells might've been connected previously
-                    if (!VisitedCells.Contains(nextCell))
+                    if (UnvisitedCells.Contains(possibleCell))
                     {
-                        GridCell fromCell = nextCellPair.Value;
-
-                        // carve away the wall between the cells
-                        Vector2Int betweenCoord = nextCell.Coord - fromCell.Coord;
-                        betweenCoord /= 2;
-                        betweenCoord = fromCell.Coord + betweenCoord;
-
-                        aMaze.CarveOutWall(betweenCoord);
-
-                        // select the new cell
-                        currentCell = nextCell;
-
-                        if (RoutineDelay > 0)
-                        {
-                            CellChanged(betweenCoord);
-                        }
+                        FrontierStack.Add(
+                            new KeyValuePair<GridCell, GridCell>(
+                            possibleCell, // to
+                            m_currentCell // from
+                            )
+                        );
                     }
                 }
-                else
-                {
-                    UnityTools.Logger.Log("DFS", $"Broke from empty Frontier.\n" +
-                        $"UnvisitedCells.Count: {UnvisitedCells.Count}\n" +
-                        $"VisitedCells.Count: {VisitedCells.Count}");
-                    break;
-                }
 
-                if (RoutineDelay > 0)
+                UnvisitedCells.Remove(m_currentCell);
+                VisitedCells.Add(m_currentCell);
+            }
+            else
+            {
+                // has been visited, do nothing?
+            }
+
+            if (FrontierStack.Count > 0)
+            {
+                int randomIndex = MOARandom.Instance.GetRange(0, FrontierStack.Count - 1);
+                // select the next cell in the frontier stack
+                KeyValuePair<GridCell, GridCell> nextCellPair = FrontierStack[randomIndex];
+                GridCell nextCell = nextCellPair.Key;
+                FrontierStack.RemoveAt(randomIndex);
+
+                // some cells might've been connected previously
+                if (!VisitedCells.Contains(nextCell))
                 {
-                    yield return new WaitForSeconds(RoutineDelay);
+                    GridCell fromCell = nextCellPair.Value;
+
+                    // carve away the wall between the cells
+                    Vector2Int betweenCoord = nextCell.Coord - fromCell.Coord;
+                    betweenCoord /= 2;
+                    betweenCoord = fromCell.Coord + betweenCoord;
+
+                    aMaze.CarveOutWall(betweenCoord);
+
+                    // select the new cell
+                    m_currentCell = nextCell;
+
+                    if (RoutineDelay > 0)
+                    {
+                        CellChanged(betweenCoord);
+                    }
                 }
             }
-            while (UnvisitedCells.Count > 0);
-        }
+            else
+            {
+                UnityTools.Logger.Log("DFS", $"Broke from empty Frontier.\n" +
+                    $"UnvisitedCells.Count: {UnvisitedCells.Count}\n" +
+                    $"VisitedCells.Count: {VisitedCells.Count}");
+            }
+        } 
+        #endregion
     }
 }

@@ -13,13 +13,9 @@ namespace MazeGeneration.Paths
         #endregion
 
         #region Variables
+        #region Fields
         [SerializeField]
         private float m_routineDelay = 0.1f;
-        public float RoutineDelay
-        {
-            get => m_routineDelay;
-            set => m_routineDelay = value;
-        }
 
         protected List<Vector2Int> m_directionsList = new List<Vector2Int>(new Vector2Int[]
         {
@@ -30,7 +26,44 @@ namespace MazeGeneration.Paths
         });
         #endregion
 
-        public abstract IEnumerator GeneratePath(Maze aMaze, Vector2Int aSize);
+        #region Properties
+        public float RoutineDelay
+        {
+            get => m_routineDelay;
+            set => m_routineDelay = value;
+        }
+
+        protected abstract bool ShouldContinue { get; }
+        #endregion
+        #endregion
+
+        public IEnumerator GeneratePathRoutine(Maze aMaze, Vector2Int aSize)
+        {
+            InitialiseAlgorithm(aMaze, aSize);
+
+            do
+            {
+                StepAlgorithm(aMaze, aSize);
+
+                if (RoutineDelay > 0)
+                {
+                    yield return new WaitForSeconds(RoutineDelay);
+                }
+            } while (ShouldContinue);
+        }
+
+        public void GeneratePath(Maze aMaze, Vector2Int aSize)
+        {
+            InitialiseAlgorithm(aMaze, aSize);
+
+            do
+            {
+                StepAlgorithm(aMaze, aSize);
+            } while (ShouldContinue);
+        }
+
+        protected abstract void InitialiseAlgorithm(Maze aMaze, Vector2Int aSize);
+        protected abstract void StepAlgorithm(Maze aMaze, Vector2Int aSize);
 
         protected void CellChanged(Vector2Int aCoord)
         {
