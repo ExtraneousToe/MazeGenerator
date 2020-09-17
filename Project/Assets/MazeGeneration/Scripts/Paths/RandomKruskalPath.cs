@@ -11,7 +11,7 @@ namespace MazeGeneration.Paths
         private Dictionary<GridCell, HashSet<GridCell>> Sets { get; set; }
         private List<KeyValuePair<GridCell, GridCell>> Pairs { get; set; }
 
-        public override IEnumerator GeneratePath(Maze aMaze, Vector2Int aSize)
+        public override IEnumerator GeneratePathRoutine(Maze aMaze, Vector2Int aSize)
         {
             int maxX, maxY;
             maxX = aMaze.Grid.GetLength(0);
