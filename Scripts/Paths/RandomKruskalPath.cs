@@ -8,20 +8,31 @@ namespace MazeGeneration.Paths
     [CreateAssetMenu(menuName = "Maze/Path/Krustal", fileName = "Krustal")]
     public class RandomKruskalPath : PathAlgorithm
     {
+        #region Variables
+        #region Fields
+        private int m_maxX;
+        private int m_maxY;
+        private int m_totalSets;
+        private HashSet<GridCell> m_setA, m_setB, m_setC;
+        private GridCell m_cellA, m_cellB, m_cellC;
+        #endregion
+
+        #region Properties
         private Dictionary<GridCell, HashSet<GridCell>> Sets { get; set; }
         private List<KeyValuePair<GridCell, GridCell>> Pairs { get; set; }
+        protected override bool ShouldContinue => m_totalSets > 1 && Pairs != null && Pairs.Count > 0;
+        #endregion
+        #endregion
 
-        public override IEnumerator GeneratePathRoutine(Maze aMaze, Vector2Int aSize)
+        #region PathAlgorithm
+        protected override void InitialiseAlgorithm(Maze aMaze, Vector2Int aSize)
         {
-            int maxX, maxY;
-            maxX = aMaze.Grid.GetLength(0);
-            maxY = aMaze.Grid.GetLength(1);
+            m_maxX = aMaze.Grid.GetLength(0);
+            m_maxY = aMaze.Grid.GetLength(1);
 
             Sets = new Dictionary<GridCell, HashSet<GridCell>>();
             Pairs = new List<KeyValuePair<GridCell, GridCell>>();
 
-            GridCell cellA, cellB, cellC;
-            HashSet<GridCell> setA, setB, setC;
 
             for (int x = 0; x < aSize.x; ++x)
             {
@@ -34,84 +45,79 @@ namespace MazeGeneration.Paths
                     bX = 1 + (x + 1) * 2;
                     cY = 1 + (y + 1) * 2;
 
-                    cellA = aMaze.Grid[
+                    m_cellA = aMaze.Grid[
                        aX,
                        aY
                     ];
 
-                    if (!Sets.ContainsKey(cellA))
+                    if (!Sets.ContainsKey(m_cellA))
                     {
-                        setA = new HashSet<GridCell>
+                        m_setA = new HashSet<GridCell>
                         {
-                            cellA
+                            m_cellA
                         };
-                        Sets.Add(cellA, setA);
+                        Sets.Add(m_cellA, m_setA);
                     }
 
-                    if (bX < maxX)
+                    if (bX < m_maxX)
                     {
-                        cellB = aMaze.Grid[
+                        m_cellB = aMaze.Grid[
                             bX,
                             aY
                         ];
 
-                        Pairs.Add(new KeyValuePair<GridCell, GridCell>(cellA, cellB));
+                        Pairs.Add(new KeyValuePair<GridCell, GridCell>(m_cellA, m_cellB));
                     }
 
-                    if (cY < maxY)
+                    if (cY < m_maxY)
                     {
-                        cellC = aMaze.Grid[
+                        m_cellC = aMaze.Grid[
                             aX,
                             cY
                         ];
 
-                        Pairs.Add(new KeyValuePair<GridCell, GridCell>(cellA, cellC));
+                        Pairs.Add(new KeyValuePair<GridCell, GridCell>(m_cellA, m_cellC));
                     }
                 }
             }
 
-            int totalSets = Sets.Count;
-
-            do
-            {
-                // get a random pair
-                int randomIndex = MOARandom.Instance.GetRange(0, Pairs.Count - 1);
-                KeyValuePair<GridCell, GridCell> pair = Pairs[randomIndex];
-                Pairs.RemoveAt(randomIndex);
-
-                cellA = pair.Key;
-                setA = Sets[cellA];
-                cellB = pair.Value;
-                setB = Sets[cellB];
-
-                // if the elements aren't present in the opposing pairs
-                if (!setA.Contains(cellB) && !setB.Contains(cellA))
-                {
-                    // combine them, removing the wall element
-                    foreach (GridCell cell in setB)
-                    {
-                        setA.Add(cell);
-                        Sets[cell] = setA;
-                    }
-
-                    // remove the wall
-                    Vector2Int wallIndex = cellB.Coord - cellA.Coord;
-                    wallIndex /= 2;
-                    wallIndex = cellA.Coord + wallIndex;
-
-                    aMaze.CarveOutWall(wallIndex);
-
-                    --totalSets;
-
-                    CellChanged(wallIndex);
-                }
-
-                if (RoutineDelay > 0)
-                {
-                    yield return new WaitForSeconds(RoutineDelay);
-                }
-            }
-            while (totalSets > 1 && Pairs.Count > 0);
+            m_totalSets = Sets.Count;
         }
+
+        protected override void StepAlgorithm(Maze aMaze, Vector2Int aSize)
+        {
+            // get a random pair
+            int randomIndex = MOARandom.Instance.GetRange(0, Pairs.Count - 1);
+            KeyValuePair<GridCell, GridCell> pair = Pairs[randomIndex];
+            Pairs.RemoveAt(randomIndex);
+
+            m_cellA = pair.Key;
+            m_setA = Sets[m_cellA];
+            m_cellB = pair.Value;
+            m_setB = Sets[m_cellB];
+
+            // if the elements aren't present in the opposing pairs
+            if (!m_setA.Contains(m_cellB) && !m_setB.Contains(m_cellA))
+            {
+                // combine them, removing the wall element
+                foreach (GridCell cell in m_setB)
+                {
+                    m_setA.Add(cell);
+                    Sets[cell] = m_setA;
+                }
+
+                // remove the wall
+                Vector2Int wallIndex = m_cellB.Coord - m_cellA.Coord;
+                wallIndex /= 2;
+                wallIndex = m_cellA.Coord + wallIndex;
+
+                aMaze.CarveOutWall(wallIndex);
+
+                --m_totalSets;
+
+                CellChanged(wallIndex);
+            }
+        }
+        #endregion
     }
 }
