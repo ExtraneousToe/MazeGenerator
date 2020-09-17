@@ -60,6 +60,25 @@ namespace MazeGeneration.Building
 
             return null;
         }
+
+        public override void SetCameraProperties(Maze aMaze, Camera aCamera)
+        {
+            aCamera.orthographic = true;
+
+            float screenAspect = Screen.width / (float)Screen.height;
+            float invAspect = 1 / screenAspect;
+
+            if (aMaze.Size.y >= aMaze.Size.x)
+            {
+                aCamera.orthographicSize = aMaze.Size.y;
+            }
+            else
+            {
+                aCamera.orthographicSize = aMaze.Size.x * invAspect;
+            }
+
+            aCamera.orthographicSize += 2;
+        }
         #endregion
     }
 }

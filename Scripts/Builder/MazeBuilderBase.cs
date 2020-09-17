@@ -115,6 +115,8 @@ namespace MazeGeneration.Building
 
             SpawnedGrid[aX, aY] = newTransform;
         }
+
+        public abstract void SetCameraProperties(Maze aMaze, Camera aCamera);
         #endregion
     }
 }

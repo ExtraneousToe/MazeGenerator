@@ -15,7 +15,11 @@ namespace MazeGeneration.Paths
         #region Variables
         [SerializeField]
         private float m_routineDelay = 0.1f;
-        public float RoutineDelay => m_routineDelay;
+        public float RoutineDelay
+        {
+            get => m_routineDelay;
+            set => m_routineDelay = value;
+        }
 
         protected List<Vector2Int> m_directionsList = new List<Vector2Int>(new Vector2Int[]
         {
