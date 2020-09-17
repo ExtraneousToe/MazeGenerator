@@ -1,0 +1,21 @@
+name: gh-pages
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    split-upm:
+        name: split pages branch
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - name: split pages branch
+              run: |
+                  git subtree split -P "$PKG_ROOT" -b gh-pages
+                  git push -u origin gh-pages
+              env:
+                  PKG_ROOT: Project/PagesRoot

@@ -10,6 +10,7 @@ namespace MazeGeneration.Demo
     {
         #region Variables
         [SerializeField] private TMP_Text m_text;
+        [SerializeField] private string m_format = "{0}";
         #endregion
 
         #region Mono
@@ -22,12 +23,12 @@ namespace MazeGeneration.Demo
         #region Mutators
         public void SetText(int value)
         {
-            m_text?.SetText($"{value}");
+            m_text?.SetText(string.Format(m_format, value));
         }
 
         public void SetText(float value)
         {
-            m_text?.SetText($"{value}");
+            m_text?.SetText(string.Format(m_format, value));
         }
         #endregion
     }
