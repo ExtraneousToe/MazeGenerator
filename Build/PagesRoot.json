@@ -1,0 +1,16 @@
+{
+"companyName": "DefaultCompany",
+"productName": "Project",
+"productVersion": "0.1",
+"dataUrl": "PagesRoot.data.unityweb",
+"wasmCodeUrl": "PagesRoot.wasm.code.unityweb",
+"wasmFrameworkUrl": "PagesRoot.wasm.framework.unityweb",
+"graphicsAPI": ["WebGL 2.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20",
+"cacheControl": {"default": "must-revalidate"},
+"developmentBuild": true,
+"multithreading": false,
+"unityVersion": "2019.4.1f1"
+}
