@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Security.Policy;
 using UnityEngine;
 
 namespace MazeGeneration.Demo
 {
-    using Microsoft.Win32;
     using Paths;
+    using TMPro;
     using UnityEngine.UI;
 
     public class MazeDemoController : MonoBehaviour
@@ -16,6 +15,8 @@ namespace MazeGeneration.Demo
         [Header("UI")]
         [SerializeField] private GameObject m_setupUIPanel;
         [SerializeField] private GameObject m_generatingPanel;
+        [SerializeField] private TMP_Dropdown m_algorithmDropdown;
+        [SerializeField] private TMP_Dropdown m_builderDropdown;
         [SerializeField] private Slider m_widthSlider;
         [SerializeField] private Slider m_heightSlider;
         [SerializeField] private Slider m_timeSlider;
@@ -68,6 +69,9 @@ namespace MazeGeneration.Demo
         #region Mono
         protected void Start()
         {
+            AlgorithmIndex = m_algorithmDropdown.value;
+            BuilderIndex = m_builderDropdown.value;
+
             m_widthSlider.value = GridWidth = 5;
             m_widthSlider.onValueChanged?.Invoke(m_widthSlider.value);
 

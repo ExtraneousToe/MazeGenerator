@@ -26,7 +26,7 @@ namespace MazeGeneration.Building
         protected override void InitialiseBuildParent(Maze aMaze)
         {
             BuildParent.localPosition = -new Vector3(
-                aMaze.Grid.GetLength(0) - 1, 
+                aMaze.Grid.GetLength(0) - 1,
                 0,
                 aMaze.Grid.GetLength(1) - 1) / 2;
         }
@@ -65,19 +65,26 @@ namespace MazeGeneration.Building
         {
             aCamera.orthographic = true;
 
+            // 1024 / 768 == 1.33333
             float screenAspect = Screen.width / (float)Screen.height;
-            float invAspect = 1 / screenAspect;
+            // 1/1.3333 == 0.75
+            float invScreenAspect = 1 / screenAspect;
 
-            if (aMaze.Size.y >= aMaze.Size.x)
-            {
-                aCamera.orthographicSize = aMaze.Size.y;
-            }
-            else
-            {
-                aCamera.orthographicSize = aMaze.Size.x * invAspect;
-            }
+            float unityScaleWidth = aMaze.Size.x;
+            float unityScaleHeight = aMaze.Size.y;
 
-            aCamera.orthographicSize += 2;
+            // varies
+            float mazeAspect = unityScaleWidth / unityScaleHeight;
+            float invMazeAspect = 1 / mazeAspect;
+
+            float gridWidth = aMaze.Grid.GetLength(0);
+            float gridHeight = aMaze.Grid.GetLength(1);
+
+            float aspectTarget = mazeAspect / screenAspect;
+            aCamera.orthographicSize = gridHeight * Mathf.Max(1, aspectTarget);
+
+            aCamera.orthographicSize /= 2;
+            aCamera.orthographicSize++;
         }
         #endregion
     }
