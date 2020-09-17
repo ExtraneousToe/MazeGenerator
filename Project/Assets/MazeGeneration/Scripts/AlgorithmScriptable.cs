@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MazeGeneration.Rooms
+namespace MazeGeneration
 {
-    public abstract class RoomGenerator : ScriptableObject
+    public abstract class AlgorithmScriptable : ScriptableObject
     {
         #region Variables
         #region Fields
@@ -24,13 +24,13 @@ namespace MazeGeneration.Rooms
         #endregion
 
         #region RoomGenerator
-        public IEnumerator GenerateRoomsRoutine(Maze aMaze, Vector2Int aSize)
+        public IEnumerator RunAlgorithmRoutine(Maze aMaze, Vector2Int aSize)
         {
-            InitialiseGenerator(aMaze, aSize);
+            Initialise(aMaze, aSize);
 
             do
             {
-                StepGenerator(aMaze, aSize);
+                Step(aMaze, aSize);
 
                 if (RoutineDelay > 0)
                 {
@@ -40,18 +40,21 @@ namespace MazeGeneration.Rooms
         }
 
 
-        public void GenerateRooms(Maze aMaze, Vector2Int aSize)
+        public void RunAlgorithm(Maze aMaze, Vector2Int aSize)
         {
-            InitialiseGenerator(aMaze, aSize);
+            Initialise(aMaze, aSize);
 
             do
             {
-                StepGenerator(aMaze, aSize);
+                Step(aMaze, aSize);
             } while (ShouldContinue);
+
+            Finalise(aMaze, aSize);
         }
 
-        protected abstract void InitialiseGenerator(Maze aMaze, Vector2Int aSize);
-        protected abstract void StepGenerator(Maze aMaze, Vector2Int aSize);
+        protected abstract void Initialise(Maze aMaze, Vector2Int aSize);
+        protected abstract void Step(Maze aMaze, Vector2Int aSize);
+        protected abstract void Finalise(Maze aMaze, Vector2Int aSize);
         #endregion
     }
 }
