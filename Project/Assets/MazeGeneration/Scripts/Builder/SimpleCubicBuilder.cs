@@ -8,10 +8,18 @@ namespace MazeGeneration.Building
     {
         #region Variables
         #region Fields
-        [SerializeField] private GameObject m_wallPrefab;
-        [SerializeField] private GameObject m_edgePrefab;
+        [Header("Paths")]
         [SerializeField] private GameObject m_pathPrefab;
-        [SerializeField] private GameObject m_cornerPrefab;
+        [SerializeField] private GameObject m_deadEndPathPrefab;
+        [SerializeField] private GameObject m_startPathPrefab;
+        [SerializeField] private GameObject m_endPathPrefab;
+
+        [Header("Inner Edges")]
+        [SerializeField] private GameObject m_innerWallPrefab;
+        [SerializeField] private GameObject m_innerCornerPrefab;
+
+        [Header("Outer Edges")]
+        [SerializeField] private GameObject m_edgePrefab;
         #endregion
 
         #region Properties
@@ -41,19 +49,37 @@ namespace MazeGeneration.Building
         {
             if (aCell == null) return null;
 
-            if (aCell is EdgeCell)
+            if (aCell is PathCell)
+            {
+                if (aCell is DeadEndCell)
+                {
+                    if (aCell is StartCell)
+                    {
+                        return m_startPathPrefab;
+                    }
+                    else if (aCell is EndCell)
+                    {
+                        return m_endPathPrefab;
+                    }
+
+                    return m_deadEndPathPrefab;
+                }
+
+                return m_pathPrefab;
+            }
+            else if (aCell is EdgeCell)
             {
                 return m_edgePrefab;
             }
             else if (aCell is WallCell)
             {
-                return m_wallPrefab;
+                return m_innerWallPrefab;
             }
             else if (aCell is CornerCell)
             {
-                return m_cornerPrefab;
+                return m_innerCornerPrefab;
             }
-            else if (aCell is PathCell || aCell is NullCell)
+            else if (aCell is NullCell)
             {
                 return m_pathPrefab;
             }

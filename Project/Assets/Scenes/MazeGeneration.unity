@@ -2564,13 +2564,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f75a5cf8ffa5f7c4695d2488d29da6d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wallPrefab: {fileID: 2086728439932262849, guid: 3479944382d66734f9e74ec06f1dc087,
-    type: 3}
-  m_edgePrefab: {fileID: 2086728439932262849, guid: 9f6300d204ebd434a9c91f7a6e628e44,
-    type: 3}
   m_pathPrefab: {fileID: 2086728439932262849, guid: cc88e3f58f3b87e4c8ded18ce3b1798b,
     type: 3}
-  m_cornerPrefab: {fileID: 2086728439932262849, guid: b2135cd4745174f4db617fc6efcb4d20,
+  m_deadEndPathPrefab: {fileID: 135463177230423429, guid: ca0de5167e5c895429142bd80fe598e3,
+    type: 3}
+  m_startPathPrefab: {fileID: 1546614451995436876, guid: 62cede01fd4943d4dab89d8f14be25f4,
+    type: 3}
+  m_endPathPrefab: {fileID: 7141699907514110962, guid: 6745dbeb3fb423248ab083d536e58f4e,
+    type: 3}
+  m_innerWallPrefab: {fileID: 2086728439932262849, guid: 3479944382d66734f9e74ec06f1dc087,
+    type: 3}
+  m_innerCornerPrefab: {fileID: 2086728439932262849, guid: b2135cd4745174f4db617fc6efcb4d20,
+    type: 3}
+  m_edgePrefab: {fileID: 2086728439932262849, guid: 9f6300d204ebd434a9c91f7a6e628e44,
     type: 3}
 --- !u!1 &762615370
 GameObject:
