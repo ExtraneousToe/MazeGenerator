@@ -111,7 +111,18 @@ namespace MazeGeneration
 
             IEnumerator Routine()
             {
-                if (m_roomGenerator) yield return StartCoroutine(m_roomGenerator?.GenerateRoomsRoutine(m_maze));
+                if (m_roomGenerator)
+                {
+                    if (m_roomGenerator.RoutineDelay > 0)
+                    {
+                        yield return StartCoroutine(m_roomGenerator.GenerateRoomsRoutine(m_maze, m_gridSize));
+                    }
+                    else
+                    {
+                        m_roomGenerator.GenerateRooms(m_maze, m_gridSize);
+                    }
+                }
+
                 if (m_generationAlgorithm)
                 {
                     if (m_generationAlgorithm.RoutineDelay > 0)
