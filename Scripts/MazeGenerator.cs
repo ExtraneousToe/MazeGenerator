@@ -111,42 +111,30 @@ namespace MazeGeneration
 
             IEnumerator Routine()
             {
-                if (m_roomGenerator)
+                MazeAlgorithmScriptable[] algorithms = new MazeAlgorithmScriptable[]
                 {
-                    if (m_roomGenerator.RoutineDelay > 0)
+                    m_roomGenerator,
+                    m_generationAlgorithm
+                };
+
+                foreach (var algorithm in algorithms)
+                {
+                    if (!algorithm)
                     {
-                        yield return StartCoroutine(m_roomGenerator.GenerateRoomsRoutine(m_maze, m_gridSize));
+                        continue;
+                    }
+
+                    if (algorithm.RoutineDelay > 0)
+                    {
+                        yield return StartCoroutine(algorithm.RunAlgorithmRoutine(m_maze, m_gridSize));
                     }
                     else
                     {
-                        m_roomGenerator.GenerateRooms(m_maze, m_gridSize);
+                        algorithm.RunAlgorithm(m_maze, m_gridSize);
                     }
                 }
 
-                if (m_generationAlgorithm)
-                {
-                    if (m_generationAlgorithm.RoutineDelay > 0)
-                    {
-                        yield return StartCoroutine(m_generationAlgorithm.GeneratePathRoutine(m_maze, m_gridSize));
-                    }
-                    else
-                    {
-                        m_generationAlgorithm.GeneratePath(m_maze, m_gridSize);
-                    }
-                }
-
-                Vector2Int[] modPoints = m_maze.MarkDeadEnds();
-                foreach (Vector2Int point in modPoints)
-                {
-                    m_builder?.UpdateConstruction(m_maze, point);
-                }
-
-                modPoints = m_maze.CreateStartAndEnd();
-                foreach (Vector2Int point in modPoints)
-                {
-                    m_builder?.UpdateConstruction(m_maze, point);
-                }
-
+                // ensure that it's definitely built
                 m_builder?.BuildMaze(m_maze);
             }
         }
