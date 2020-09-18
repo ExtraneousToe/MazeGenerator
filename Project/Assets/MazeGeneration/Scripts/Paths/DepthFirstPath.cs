@@ -20,20 +20,12 @@ namespace MazeGeneration.Paths
         private List<GridCell> UnvisitedCells { get; set; }
         private List<GridCell> VisitedCells { get; set; }
 
-        private List<Vector2Int> DirectionsList = new List<Vector2Int>(new Vector2Int[]
-        {
-            Vector2Int.up,
-            Vector2Int.right,
-            Vector2Int.down,
-            Vector2Int.left
-        });
-
         protected override bool ShouldContinue => UnvisitedCells != null && UnvisitedCells.Count > 0;
         #endregion
         #endregion
 
         #region PathAlgorithm
-        protected override void InitialiseAlgorithm(Maze aMaze, Vector2Int aSize)
+        protected override void Initialise(Maze aMaze, Vector2Int aSize)
         {
             m_maxX = aMaze.Grid.GetLength(0);
             m_maxY = aMaze.Grid.GetLength(1);
@@ -65,13 +57,13 @@ namespace MazeGeneration.Paths
             FrontierStack = new Stack<KeyValuePair<GridCell, GridCell>>();
         }
 
-        protected override void StepAlgorithm(Maze aMaze, Vector2Int aSize)
+        protected override void Step(Maze aMaze, Vector2Int aSize)
         {
             // if not yet visited
             if (UnvisitedCells.Contains(m_currentCell))
             {
                 // shuffle the directions and try stacking the connecting cells
-                DirectionsList = new List<Vector2Int>(DirectionsList.Shuffle());
+                ShuffleDirections();
                 foreach (Vector2Int direction in DirectionsList)
                 {
                     int pX, pY;
@@ -139,7 +131,6 @@ namespace MazeGeneration.Paths
                     $"UnvisitedCells.Count: {UnvisitedCells.Count}\n" +
                     $"VisitedCells.Count: {VisitedCells.Count}");
             }
-
         }
         #endregion
     }

@@ -25,7 +25,7 @@ namespace MazeGeneration.Paths
         #endregion
 
         #region PathAlgorithm
-        protected override void InitialiseAlgorithm(Maze aMaze, Vector2Int aSize)
+        protected override void Initialise(Maze aMaze, Vector2Int aSize)
         {
             m_maxX = aMaze.Grid.GetLength(0);
             m_maxY = aMaze.Grid.GetLength(1);
@@ -56,14 +56,14 @@ namespace MazeGeneration.Paths
             m_currentCell = aMaze.Grid[fX, fY];
         }
 
-        protected override void StepAlgorithm(Maze aMaze, Vector2Int aSize)
+        protected override void Step(Maze aMaze, Vector2Int aSize)
         {
             // if not yet visited
             if (UnvisitedCells.Contains(m_currentCell))
             {
                 // shuffle the directions and try stacking the connecting cells
-                m_directionsList = new List<Vector2Int>(m_directionsList.Shuffle());
-                foreach (Vector2Int direction in m_directionsList)
+                ShuffleDirections();
+                foreach (Vector2Int direction in DirectionsList)
                 {
                     int pX, pY;
                     pX = m_currentCell.Coord.x + direction.x * 2;
@@ -132,7 +132,7 @@ namespace MazeGeneration.Paths
                     $"UnvisitedCells.Count: {UnvisitedCells.Count}\n" +
                     $"VisitedCells.Count: {VisitedCells.Count}");
             }
-        } 
+        }
         #endregion
     }
 }

@@ -25,7 +25,7 @@ namespace MazeGeneration.Paths
         #endregion
 
         #region PathAlgorithm
-        protected override void InitialiseAlgorithm(Maze aMaze, Vector2Int aSize)
+        protected override void Initialise(Maze aMaze, Vector2Int aSize)
         {
             m_maxX = aMaze.Grid.GetLength(0);
             m_maxY = aMaze.Grid.GetLength(1);
@@ -84,7 +84,7 @@ namespace MazeGeneration.Paths
             m_totalSets = Sets.Count;
         }
 
-        protected override void StepAlgorithm(Maze aMaze, Vector2Int aSize)
+        protected override void Step(Maze aMaze, Vector2Int aSize)
         {
             // get a random pair
             int randomIndex = MOARandom.Instance.GetRange(0, Pairs.Count - 1);
